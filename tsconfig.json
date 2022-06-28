@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "target": "es2017",
+    "outDir": "../dist",
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    //"typeRoots": ["../node_modules/@types", "../type"],
+    "esModuleInterop": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true
+  },
+  "include": ["../**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "../migrations/*",
+    "../seeders/*",
+    "../models/*"
+  ]
+}
