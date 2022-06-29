@@ -30,7 +30,7 @@ export const messageController = (io: Server | Namespace, socket: Socket) => {
   });
   socket.on("msg:getAll", () => {
     let { room_id } = socket.handshake.query;
-    room_id = room_id + "" || "-1";
+    room_id = room_id ? room_id + "" : "-1";
     getAllMessage(room_id, (err: Error, list: Array<MessageData>) => {
       err
         ? io.to(socket.id).emit("msg:error", { error: err.toString() })
