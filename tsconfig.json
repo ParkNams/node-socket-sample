@@ -20,11 +20,5 @@
     "declaration": true
   },
   "include": ["../**/*"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "../migrations/*",
-    "../seeders/*",
-    "../models/*"
-  ]
+  "exclude": ["node_modules", "dist"]
 }

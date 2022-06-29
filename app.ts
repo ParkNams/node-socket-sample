@@ -3,8 +3,14 @@ import { Server, Socket } from "socket.io";
 import { connectValidation, messageValidation } from "./middleware/validation";
 import { messageController } from "./controller/message";
 import { userController } from "./controller/user";
+import { userCache } from "./cache";
 const httpServer = createServer();
-const io = new Server(httpServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});
 const adminIo = io.of("/admin");
 const messageIo = io.of("/msg");
 const userIo = io.of("/user");
@@ -29,10 +35,14 @@ messageIo.on("connection", (socket: Socket) => {
   messageController(messageIo, socket);
 
   socket.on("disconnecting", (reason: string) => {
-    console.log(reason);
+    console.log("disconnect");
+    userCache.del(socket.handshake.auth.userHash);
     const { room_id } = socket.handshake.query;
-    socket.to(room_id + "").emit("msg:leaveUser", { message: "user leave" });
+    messageIo.to(room_id + "").emit("msg:leaveUser", { message: "user leave" });
   });
 });
 
+messageIo.on("disconnecting", () => {
+  messageIo.disconnectSockets(true);
+});
 httpServer.listen(4000);

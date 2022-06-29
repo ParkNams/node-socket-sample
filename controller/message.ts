@@ -10,16 +10,20 @@ import uuid, { v4 } from "uuid";
 export const messageController = (io: Server | Namespace, socket: Socket) => {
   socket.on("msg:insert", (data: MessageData) => {
     insertMessage(data, (err: Error, result: MessageData) => {
+      console.log(`user: ${socket.handshake.auth.userId}`);
+      if (io.constructor === Namespace) {
+        console.log(io.sockets.size);
+      }
       err
-        ? socket.to(socket.id).emit("msg:error", { error: err.toString() })
-        : socket.to(data.chatRoomId + "").emit("msg:inserted", result);
+        ? io.to(socket.id).emit("msg:error", { error: err.toString() })
+        : io.to(String(data.chatRoomId)).emit("msg:inserted", result);
     });
   });
   socket.on("msg:update", (data: MessageData) => {
     updateMessage(data, (err: Error, result: MessageData) => {
       err
-        ? socket.to(socket.id).emit("msg:error", { error: err.toString() })
-        : socket.to(data.chatRoomId + "").emit("msg:updated", result);
+        ? io.to(socket.id).emit("msg:error", { error: err.toString() })
+        : io.to(data.chatRoomId + "").emit("msg:updated", result);
     });
   });
   socket.on("msg:getAll", () => {
@@ -27,8 +31,8 @@ export const messageController = (io: Server | Namespace, socket: Socket) => {
     room_id = room_id + "" || "-1";
     getAllMessage(room_id, (err: Error, list: Array<MessageData>) => {
       err
-        ? socket.to(socket.id).emit("msg:error", { error: err.toString() })
-        : socket.to(room_id + "").emit("msg:getAll", list);
+        ? io.to(socket.id).emit("msg:error", { error: err.toString() })
+        : io.to(room_id + "").emit("msg:getAll", list);
     });
   });
 };

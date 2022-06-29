@@ -1,5 +1,5 @@
 const NodeCache = require("node-cache");
 
 const cache = new NodeCache();
-
-export { cache };
+const userCache = new NodeCache();
+export { cache, userCache };
