@@ -12,3 +12,8 @@ declare interface MessageData {
 declare interface Result {
   message: string;
 }
+
+declare interface User {
+  userId: string;
+  userPassword: string;
+}
