@@ -8,6 +8,9 @@ const SECRET_SALT: string = process.env.USER_SECRET_SALT + "";
 const connectValidation = (socket: Socket, next: Function): void => {
   const { auth, headers, query } = socket.handshake;
   const _userId = auth["userId"] || query["userId"];
+  if (!_userId) {
+    next(new Error("id doesn't exist"));
+  }
   const hash: string = crypto
     .createHmac("sha256", SECRET_SALT)
     .update(_userId)

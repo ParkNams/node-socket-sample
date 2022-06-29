@@ -6,9 +6,9 @@ import {
   updateMessage,
 } from "../manager/message";
 import uuid, { v4 } from "uuid";
-
 export const messageController = (io: Server | Namespace, socket: Socket) => {
   socket.on("msg:insert", (data: MessageData) => {
+    console.log(data);
     insertMessage(data, (err: Error, result: MessageData) => {
       console.log(
         `user: ${socket.handshake.auth.userId || socket.handshake.query.userId}`
