@@ -10,7 +10,9 @@ import uuid, { v4 } from "uuid";
 export const messageController = (io: Server | Namespace, socket: Socket) => {
   socket.on("msg:insert", (data: MessageData) => {
     insertMessage(data, (err: Error, result: MessageData) => {
-      console.log(`user: ${socket.handshake.auth.userId}`);
+      console.log(
+        `user: ${socket.handshake.auth.userId || socket.handshake.query.userId}`
+      );
       if (io.constructor === Namespace) {
         console.log(io.sockets.size);
       }
@@ -32,7 +34,7 @@ export const messageController = (io: Server | Namespace, socket: Socket) => {
     getAllMessage(room_id, (err: Error, list: Array<MessageData>) => {
       err
         ? io.to(socket.id).emit("msg:error", { error: err.toString() })
-        : io.to(room_id + "").emit("msg:getAll", list);
+        : io.to(socket.id).emit("msg:getAll", list);
     });
   });
 };

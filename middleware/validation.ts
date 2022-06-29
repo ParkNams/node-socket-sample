@@ -6,23 +6,22 @@ import crypto from "crypto";
 dotenv.config();
 const SECRET_SALT: string = process.env.USER_SECRET_SALT + "";
 const connectValidation = (socket: Socket, next: Function): void => {
-  const auth = socket.handshake.auth;
-  // const hash = CryptoJS.AES.encrypt(
-  //   JSON.stringify(auth["userId"]),
-  //   SECRET_SALT
-  // ).toString();
-  const hash = crypto
+  const { auth, headers, query } = socket.handshake;
+  const _userId = auth["userId"] || query["userId"];
+  const hash: string = crypto
     .createHmac("sha256", SECRET_SALT)
-    .update(auth["userId"])
+    .update(_userId)
     .digest("hex");
+  console.log(headers);
+  console.log(query);
   if (
     (process.env.API_KEY !== auth["API_KEY"] &&
-      process.env.API_KEY !== auth["api_key"]) ||
+      process.env.API_KEY !== headers["api_key"]) ||
     userCache.get(hash)
   ) {
     next(new Error("not accept"));
   } else {
-    userCache.set(hash, { userId: auth["userId"] });
+    userCache.set(hash, { userId: _userId });
     socket.handshake.auth.userHash = hash;
     next();
   }
